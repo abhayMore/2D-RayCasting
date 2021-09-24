@@ -19,8 +19,9 @@ int ReturnIntRandom(int lower, int upper)
 int main()
 {
   srand(time(0));
-
-  sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "2D Raycasting");
+  sf::ContextSettings settings;
+  settings.antialiasingLevel = 8;
+  sf::RenderWindow window(sf::VideoMode(WIDTH,HEIGHT), "2D-RayCasting", sf::Style::Default, settings);	
 
 
   std::vector<Wall> walls{};

@@ -1,17 +1,16 @@
-#ifndef WALL_H
-#define WALL_H
-#include "SFML/Graphics.hpp"
+#pragma once
+#include "segment.h"
 
 class Wall
 {
-  sf::Vector2f stPoint, endPoint;
-  sf::VertexArray wall;
+	std::vector<segment> Walls;
+	sf::VertexArray wallsLine;
+
 public:
-  Wall(const float x1, const float y1,const float x2, const float y2);
+	Wall(int, int);
 
-  sf::Vector2f getStartPoint();
-  sf::Vector2f getEndPoint();
-  void Draw(sf::RenderWindow& window);
+	void drawWalls(sf::RenderWindow&);
+
+	std::vector<segment> getWallsVector();
+
 };
-
-#endif //WALL_H

@@ -1,26 +1,26 @@
-#ifndef RAY_H
-#define RAY_H
-#include "Wall.h"
-#include "SFML/Graphics.hpp"
+#pragma once
 
-class Ray{
-private:
-  sf::Vector2f rayPosition, rayDirection, DirPosition;
+#include "segment.h"
+
+
+class Ray
+{
+  std::vector<segment> Rays;
   sf::VertexArray Line;
 
 public:
-  Ray(sf::Vector2f rPos, float Angle);
+  Ray();
 
-  void initRayDirPosition();
-  void setRayDirPos(sf::Vector2f XY);
-  void setRayPosition(sf::Vector2f XY);
+  void initRays(Vector2f , std::vector<segment> );
 
-  sf::Vector2f Cast(Wall& wall);
-  void CalculateHit(std::vector<Wall> walls);
+  void drawRays(sf::RenderWindow& );
 
-  void Update();
-  void Draw(sf::RenderWindow& window);
+  void calculateHit(std::vector<segment>);
+
+  std::pair<Vector2f, float> getIntersection(segment, segment);
+
+  void fillArea(sf::RenderWindow& window);
+
+  void clearRayVector();
 
 };
-
-#endif //RAY_H

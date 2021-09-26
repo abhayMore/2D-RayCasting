@@ -1,121 +1,98 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include "segment.h"
 #include "Wall.h"
 #include "Ray.h"
 
-#define WIDTH 800
-#define HEIGHT 600
-
-float Radian(double degree)
-{
-    double PI = 3.14159265359;
-    return (degree * (PI / 180));
-}
-int ReturnIntRandom(int lower, int upper)
-{
-  return (rand() % (upper - lower + 1)) + lower;
-}
-
+#define WIDTH 900
+#define HEIGHT 900
 
 int main()
 {
   srand(time(0));
   sf::ContextSettings settings;
   settings.antialiasingLevel = 8;
-  sf::RenderWindow window(sf::VideoMode(WIDTH,HEIGHT), "2D-RayCasting", sf::Style::Default, settings);	
+  sf::RenderWindow window(sf::VideoMode(WIDTH,HEIGHT), "2D-RayCasting", sf::Style::Titlebar | sf::Style::Close, settings);
 
+  Wall wallsInit(WIDTH,HEIGHT);
+  Ray lightRays;
 
-  std::vector<Wall> walls{};
-  int wallNumber = 5;
-  for(int i = 0; i < wallNumber; i++)
-  {
-    float x1 = ReturnIntRandom(0,WIDTH);
-    float x2 = ReturnIntRandom(0,WIDTH);
-    float y1 = ReturnIntRandom(0,HEIGHT);
-    float y2 = ReturnIntRandom(0,HEIGHT);
-    walls.push_back(Wall(x1,y1,x2,y2));
-  }
-
-
-  std::vector<Ray> rays;
-  for(float i = 0; i < 360; i+=0.05)
-  {
-    rays.push_back(Ray(sf::Vector2f(WIDTH/2,HEIGHT/2), Radian(i)));
-  }
-
+  bool isKeyRpressed = false;
   bool isRightPressed = false;
-
-  while(window.isOpen())
+  while (window.isOpen())
   {
-
     sf::Event event;
-    while(window.pollEvent(event))
+    while (window.pollEvent(event))
     {
       switch (event.type)
       {
-        case sf::Event::Closed:
+      case sf::Event::Closed:
+      {
+        window.close();
+      }
+      break;
+      case sf::Event::Resized:
+      {
+        sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+        window.setView(sf::View(visibleArea));
+      }
+      break;
+
+      case sf::Event::KeyPressed:
+      {
+        switch (event.key.code)
         {
-          window.close();
+        case sf::Keyboard::R:
+        {
+          if (isKeyRpressed)
+            isKeyRpressed = false;
+          else
+            isKeyRpressed = true;
         }
-        break;
-        case sf::Event::Resized:
+        default:
+          break;
+        }
+      }
+      case sf::Event::MouseButtonPressed:
+      {
+        switch (event.mouseButton.button) {
+        case sf::Mouse::Left:
         {
-          sf::FloatRect visibleArea(0,0 ,event.size.width, event.size.height);
-          window.setView(sf::View(visibleArea));
         }
         break;
 
-        case sf::Event::MouseButtonPressed:
+        case sf::Mouse::Right:
         {
-          switch (event.mouseButton.button) {
-            case sf::Mouse::Left:
-            {
-            }
-            break;
-
-            case sf::Mouse::Right:
-            {
-              if(isRightPressed)
-                isRightPressed = false;
-              else
-                isRightPressed = true;
-            }
-            break;
-          }
+          if (isRightPressed)
+            isRightPressed = false;
+          else
+            isRightPressed = true;
         }
         break;
-
-        case sf::Event::MouseButtonReleased:
-        {
-          switch (event.mouseButton.button) {
-            case sf::Mouse::Left:
-            {
-            }
-            break;
-            case sf::Mouse::Right:
-            {
-            }
-            break;
-          }
         }
-        break;
+      }
+      break;
       }
     }
 
-    window.clear();
 
+    window.clear();
+    wallsInit.drawWalls(window);
+    
     sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
-    for(auto& w : walls)
-      w.Draw(window);
-    for(auto& r : rays)
+
+    lightRays.initRays(Vector2f(mousePos.x, mousePos.y), wallsInit.getWallsVector());
+    lightRays.calculateHit(wallsInit.getWallsVector());
+    if (isKeyRpressed)
+      lightRays.drawRays(window);
+
+    if (isRightPressed)
     {
-        if(isRightPressed)
-        {
-          r.setRayPosition(mousePos);
-          r.CalculateHit(walls);
-          r.Update();
-          r.Draw(window);
-        }
+      lightRays.fillArea(window);
     }
+
+    lightRays.clearRayVector();
     window.display();
   }
+  return 0;
 }

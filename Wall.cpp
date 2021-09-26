@@ -1,22 +1,38 @@
 #include "Wall.h"
 
-Wall::Wall(const float x1, const float y1,const float x2, const float y2):stPoint(x1,y1), endPoint(x2,y2) , wall(sf::Lines, 2)
+int ReturnIntRandom(int lower, int upper)
 {
-  wall[0].position = stPoint;
-  wall[1].position = endPoint;
+	return (rand() % (upper - lower + 1)) + lower;
 }
 
-sf::Vector2f Wall::getStartPoint()
+Wall::Wall(int WIDTH,int HEIGHT) :wallsLine(sf::Lines, 2)
 {
-  return stPoint;
+	//Boundry Coordinates;
+	Walls.push_back(segment(Vector2f(1, 1), Vector2f(WIDTH, 1)));
+	Walls.push_back(segment(Vector2f(WIDTH, 1), Vector2f(WIDTH, HEIGHT)));
+	Walls.push_back(segment(Vector2f(WIDTH, HEIGHT), Vector2f(1, HEIGHT)));
+	Walls.push_back(segment(Vector2f(1, HEIGHT), Vector2f(1, 1)));
+
+	
+
+	Walls.push_back(segment(Vector2f(572, 220), Vector2f(230, 149)));
+	Walls.push_back(segment(Vector2f(317, 708), Vector2f(268, 750)));
+	Walls.push_back(segment(Vector2f(282, 279), Vector2f(729, 448)));
+	Walls.push_back(segment(Vector2f(93, 160), Vector2f(108, 746)));
+
 }
 
-sf::Vector2f Wall::getEndPoint()
+void Wall::drawWalls(sf::RenderWindow& window)
 {
-  return endPoint;
+	for (int i = 0; i < Walls.size(); i++)
+	{
+		wallsLine[0].position = sf::Vector2f(Walls[i].v1.x, Walls[i].v1.y);
+		wallsLine[1].position = sf::Vector2f(Walls[i].v2.x, Walls[i].v2.y);
+		window.draw(wallsLine);
+	}
 }
 
-void Wall::Draw(sf::RenderWindow& window)
+std::vector<segment> Wall::getWallsVector()
 {
-  window.draw(wall);
+	return Walls;
 }

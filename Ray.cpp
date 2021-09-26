@@ -1,4 +1,5 @@
 #include "Ray.h"
+#include <cfloat>
 
 bool comparator(segment R1, segment R2)
 {

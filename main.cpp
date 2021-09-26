@@ -5,7 +5,7 @@
 #include "Ray.h"
 
 #define WIDTH 900
-#define HEIGHT 900
+#define HEIGHT 800
 
 int main()
 {
